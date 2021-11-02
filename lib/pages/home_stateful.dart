@@ -1,11 +1,18 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:http_request_get/models/http_stateful.dart';
 
 class HomeStateful extends StatefulWidget {
+  const HomeStateful({Key? key}) : super(key: key);
+
   @override
   _HomeStatefulState createState() => _HomeStatefulState();
 }
 
 class _HomeStatefulState extends State<HomeStateful> {
+  HttpStateful dataResponse = HttpStateful();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,25 +31,31 @@ class _HomeStatefulState extends State<HomeStateful> {
                 height: 100,
                 width: 100,
                 child: Image.network(
-                  "https://www.uclg-planning.org/sites/default/files/styles/featured_home_left/public/no-user-image-square.jpg?itok=PANMBJF-",
+                  (dataResponse.avatar == null)
+                      ? "https://www.uclg-planning.org/sites/default/files/styles/featured_home_left/public/no-user-image-square.jpg?itok=PANMBJF-"
+                      : dataResponse.avatar!,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            const FittedBox(
+            FittedBox(
               child: Text(
-                "ID : Belum ada data",
-                style: TextStyle(fontSize: 20),
+                (dataResponse.id == null)
+                    ? "ID : Belum ada data"
+                    : "ID : ${dataResponse.id}",
+                style: const TextStyle(fontSize: 20),
               ),
             ),
             const SizedBox(height: 20),
             const FittedBox(
                 child: Text("Name : ", style: TextStyle(fontSize: 20))),
-            const FittedBox(
+            FittedBox(
               child: Text(
-                "Belum ada data",
-                style: TextStyle(
+                (dataResponse.fullName == null)
+                    ? "Belum ada data"
+                    : dataResponse.fullName!,
+                style: const TextStyle(
                   fontSize: 20,
                 ),
               ),
@@ -50,17 +63,26 @@ class _HomeStatefulState extends State<HomeStateful> {
             const SizedBox(height: 20),
             const FittedBox(
                 child: Text("Email : ", style: TextStyle(fontSize: 20))),
-            const FittedBox(
+            FittedBox(
               child: Text(
-                "Belum ada data",
-                style: TextStyle(
+                (dataResponse.email == null)
+                    ? "Belum ada data"
+                    : dataResponse.email!,
+                style: const TextStyle(
                   fontSize: 20,
                 ),
               ),
             ),
             const SizedBox(height: 100),
             OutlinedButton(
-              onPressed: () {},
+              onPressed: () {
+                HttpStateful.connectAPI((1 + Random().nextInt(10)).toString())
+                    .then((value) {
+                  setState(() {
+                    dataResponse = value;
+                  });
+                });
+              },
               child: const Text(
                 "GET DATA",
                 style: TextStyle(
